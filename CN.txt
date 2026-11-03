@@ -1,0 +1,1724 @@
+RAJALAKSHMI ENGINEERING COLLEGE
+DEPARTMENT OF COMPUTER SCIENCE AND ENGINEERING
+CS23532 - COMPUTER NETWORKS LABORATORY
+ALL EXPERIMENTS: OBSERVATION RECORD + PRACTICAL EXAM WRITING NOTES
+Academic year: 2026-2027 | V Semester
+======================================================================
+
+HOW TO USE THESE NOTES
+----------------------
+These notes follow the 15 numbered experiments in the supplied lab manual,
+with sub-experiments, supplementary wireless-LAN work and an appendix of
+additional practice. They are expanded using the uploaded handwritten
+observation records for Experiments 1-14 and the separate LAN write-up.
+
+For an observation/exam answer, write: (1) Experiment no. and title,
+(2) AIM, (3) requirements/short theory, (4) algorithm or procedure,
+(5) commands/program/configuration, (6) sample output/observation and
+(7) RESULT. Draw the suggested network topology where applicable.
+
+IMPORTANT: Outputs here are EXAMPLES, not a claim that these commands were
+run on your machine. Substitute actual IPs, interface names, scan outputs,
+packet counts and screenshots obtained during your experiment. Some manual
+sections (especially Experiments 6, 7 and 12-14) leave code blank; the
+sample programs below are exam-ready illustrative implementations provided
+to complete those sections. Use only on networks you own or are authorised
+to test. TCP/IP device addresses and Cisco interface names may vary.
+
+CONTENTS
+--------
+ 1. Basic network commands in Windows and Linux
+ 2. Network cables, straight-through and crossover crimping
+ 3. Cisco Packet Tracer interface; hub vs switch simulation
+ 4. Set up and configure LAN with switch and file sharing
+ 5. Capturing and analysing packets using Wireshark
+ 6. Hamming code - error detection and single-bit correction
+ 7. Sliding Window Protocol - data-link flow control
+ 8. Nmap live-host discovery (TryHackMe); wireless LAN supplement
+ 9. Subnetting using Cisco Packet Tracer
+10. Internetworking using router; wireless router/DHCP/cloud; lab setup
+11. Static routing and RIP in Cisco Packet Tracer
+12. TCP/UDP echo client-server and socket chat
+13. Own ping utility in Python
+14. Raw-packet sniffing using Scapy
+15. Webalizer web-log analysis
+APPENDIX: Five additional-practice topics from the manual
+
+
+======================================================================
+EXPERIMENT 1 - STUDY OF BASIC NETWORK COMMANDS
+======================================================================
+AIM:
+To study and execute various networking commands in Windows and Linux and
+understand their use in network configuration and troubleshooting.
+
+SOFTWARE REQUIRED:
+Windows Command Prompt/PowerShell or a Linux terminal; network connection.
+
+THEORY:
+Networking commands help identify network addresses, DNS details, routing
+paths, interface configuration, neighbour tables and active connections.
+ICMP Echo Request/Reply is used by ping to test reachability.
+
+COMMANDS, PURPOSE AND EXAMPLE:
+ 1. arp -a                    : Show ARP cache (IP-to-MAC mappings).
+ 2. hostname                  : Display computer/host name.
+ 3. ipconfig /all             : Show full Windows TCP/IP configuration.
+ 4. netstat -an               : Show active TCP/UDP ports numerically.
+ 5. netstat -r                : Display routing table.
+ 6. nslookup example.com      : Query DNS records for a domain.
+ 7. ping 8.8.8.8             : Test IP reachability and round-trip time.
+ 8. tracert example.com       : Trace packet route in Windows.
+ 9. pathping example.com      : Trace route and measure hop loss (Windows).
+10. route print               : Display Windows IP routing table.
+11. nbtstat -a COMPUTER       : Display NetBIOS name table for named PC.
+12. ip address show           : List Linux interface IP addresses.
+13. ip route show             : Display Linux routing table.
+14. ip link show              : List network interfaces and states.
+15. ifconfig                  : Display/configure interfaces (legacy Linux).
+16. mtr example.com           : Live ping + traceroute statistics (Linux).
+17. sudo tcpdump -i eth0 -c 10: Capture ten packets from eth0.
+18. nmcli connection show     : Show NetworkManager connection profiles.
+19. ping -c 4 example.com     : Send four ICMP requests (Linux).
+20. ss -tuln                  : Show listening TCP/UDP sockets (Linux).
+
+PROCEDURE:
+1. Open Windows Command Prompt or Linux terminal.
+2. Execute hostname and ipconfig /all (Windows) or ip address show (Linux).
+3. Run arp -a to view IP-to-MAC mappings.
+4. Run ping 8.8.8.8 and note packet loss and response time.
+5. Use nslookup example.com to identify the DNS response.
+6. Use netstat -an (or ss -tuln), route print/ip route to inspect sockets
+   and routing tables.
+7. Run tracert/pathping (Windows) or mtr (Linux) to study hop-by-hop route.
+8. Record output and explain the purpose of each command.
+
+SAMPLE OUTPUT (depends on network):
+  > hostname
+  LAB-PC
+  > ping 192.168.1.1
+  Reply from 192.168.1.1: bytes=32 time<1ms TTL=64
+  Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)
+  > nslookup example.com
+  Name: example.com
+  Address: [DNS-returned address]
+
+OBSERVATION:
+IP configuration, hostname, active ports, DNS resolution, routing path,
+MAC-address mapping and network reachability were observed.
+
+RESULT:
+Thus various network commands used in Windows and Linux were studied and
+executed, and their functions were verified.
+
+VIVA:
+Q: What does ping use? A: ICMP Echo Request and Echo Reply.
+Q: ARP maps what to what? A: IPv4 address to link-layer MAC address.
+Q: What does nslookup do? A: Queries DNS for names and records.
+Q: Difference between ping and tracert? A: Reachability vs route/hops.
+
+
+======================================================================
+EXPERIMENT 2 - STUDY OF NETWORK CABLES AND CRIMPING
+======================================================================
+AIM:
+To study different types of network cables and prepare straight-through
+and crossover Ethernet cables using RJ-45 connectors and a crimping tool.
+
+APPARATUS:
+Cat5e/Cat6 UTP cable, two RJ-45 plugs, crimping tool, wire stripper/cutter,
+and LAN cable tester (if available).
+
+THEORY / CABLE TYPES:
+1. UTP (Unshielded Twisted Pair): Inexpensive, flexible, common in LANs;
+   prone to electromagnetic interference. Cat5e commonly supports 1 Gbps.
+2. STP (Shielded Twisted Pair): Shielding reduces noise; more expensive;
+   commonly used in electrically noisy environments.
+3. Coaxial: Central conductor, insulation and metallic shield; used in
+   cable TV/broadband systems. Types include RG-6, RG-59 and RG-11.
+4. Optical fibre: Transmits light, not electrical signals; high bandwidth,
+   long reach, immune to EMI. Single-mode and multimode variants.
+
+RJ-45 PIN ORDER (hold connector in the same orientation at BOTH ends):
+T568A: 1 White/Green, 2 Green, 3 White/Orange, 4 Blue,
+       5 White/Blue, 6 Orange, 7 White/Brown, 8 Brown.
+T568B: 1 White/Orange, 2 Orange, 3 White/Green, 4 Blue,
+       5 White/Blue, 6 Green, 7 White/Brown, 8 Brown.
+Straight-through: A-A or B-B (same order at both ends).
+Crossover: A-B (T568A at one end and T568B at the other).
+Typical legacy use: straight-through PC-switch; crossover PC-PC.
+Modern Ethernet interfaces often support auto-MDI/MDIX, so either may work.
+
+ALGORITHM / PROCEDURE:
+1. Cut the required length of Cat5e/Cat6 cable.
+2. Strip about 1.5 to 2 cm of outer insulation at both ends.
+3. Separate and straighten the four twisted pairs (eight conductors).
+4. Arrange conductors according to T568B (or T568A) order.
+5. Cut conductors to equal length and insert fully into RJ-45 connector.
+6. Ensure each wire reaches the front and jacket enters the connector.
+7. Press connector with the crimping tool to secure contacts.
+8. For straight-through, repeat the same wire order at the second end.
+9. For crossover, use T568A at one end and T568B at the other.
+10. Test continuity with cable tester or connect compatible devices.
+
+EXPECTED OUTPUT / OBSERVATION:
+- Straight-through tester: pins 1->1, 2->2, ... 8->8.
+- Crossover tester: 1->3, 2->6, 3->1, 6->2;
+  pins 4, 5, 7 and 8 remain straight through.
+- Correct cabling produces a working Ethernet link (link LED turns on).
+
+RESULT:
+Thus UTP, STP, coaxial and fibre-optic cables were studied, and
+straight-through and crossover cables were prepared and tested.
+
+VIVA:
+Q: Connector used for copper Ethernet? A: 8P8C, commonly called RJ-45.
+Q: T568A vs T568B? A: Green and orange pair positions are interchanged.
+Q: Why twist pairs? A: To reduce crosstalk/electromagnetic interference.
+
+
+======================================================================
+EXPERIMENT 3 - CISCO PACKET TRACER AND HUB VS SWITCH
+======================================================================
+AIM:
+To study Cisco Packet Tracer's interface, design basic networks and
+compare frame forwarding through a hub and a switch.
+
+SOFTWARE REQUIRED: Cisco Packet Tracer.
+
+THEORY:
+Packet Tracer is a network simulation tool used to assemble devices,
+configure ports/IPs, simulate packets and analyse network operation.
+A hub is a Physical-layer repeater that sends received bits to other
+ports. A switch uses a MAC-address table to forward Ethernet frames to
+the proper port after learning source MAC addresses. Both examples use
+a physical star layout; a hub shares one collision domain, whereas a
+switch gives each port its own collision domain.
+
+IMPORTANT PACKET TRACER PANELS:
+Menu Bar, Main Toolbar, Logical/Physical Workspace, Workspace, Common
+Tools, Realtime/Simulation tabs, Device Selection box, and PDU/Event List.
+
+PROCEDURE:
+PART A: Tool interface
+1. Launch Cisco Packet Tracer; inspect the device-selection area.
+2. Identify PCs, hubs, switches, routers, connections and simulation tools.
+3. Place and remove sample devices and save a .pkt topology file.
+
+PART B: Compare hub and switch
+1. Drag four PCs and one hub into the workspace.
+2. Join each PC to the hub using Copper Straight-Through cables.
+3. Assign static addresses to PCs, e.g. 10.1.1.1 to 10.1.1.4 with
+   subnet mask 255.0.0.0.
+4. Build a second topology with four PCs and one 2960 switch.
+5. Connect PCs similarly and assign addresses within the same subnet.
+6. Select Add Simple PDU: click source PC0 and destination PC1.
+7. Switch to Simulation mode and step through the events.
+8. Observe the hub repeating traffic onto other ports.
+9. Observe switch learning MAC addresses, flooding unknown unicast
+   initially, then forwarding known unicast to the destination port.
+10. Verify delivery, compare both devices and save simulations.
+
+TEXT DIAGRAM (draw this in record):
+  PC0 ---\                         PC0 ---\
+  PC1 ---- HUB (shared)            PC1 ---- SWITCH (MAC table)
+  PC2 ---/                         PC2 ---/
+  PC3 --/                          PC3 --/
+
+OBSERVATION:
+Hub: forwards incoming signal to all other ports; less traffic isolation.
+Switch: learns MAC-to-port entries; sends learned unicast to the correct
+port (broadcast/unknown-unicast can still be flooded).
+
+SAMPLE OUTPUT:
+  Simple PDU: PC0 -> PC1 | Type: ICMP | Last status: Successful
+
+RESULT:
+Thus the Cisco Packet Tracer interface was studied and the different
+forwarding behaviour of hubs and switches was analysed successfully.
+
+VIVA:
+Q: Hub operates at which OSI layer? A: Layer 1.
+Q: Switch commonly operates at which OSI layer? A: Layer 2.
+Q: Switch forwarding address? A: Destination MAC address.
+
+
+======================================================================
+EXPERIMENT 4 - SET UP AND CONFIGURE A LAN WITH SWITCH
+======================================================================
+AIM:
+To set up a four-computer Local Area Network using a switch and Ethernet
+cables, assign static IPs, check ping connectivity and share a resource.
+
+APPARATUS / SOFTWARE:
+4 PCs with NICs, 1 Ethernet switch, 4 straight-through Ethernet cables;
+optionally Cisco Packet Tracer and a simulated HTTP server.
+
+THEORY:
+A LAN connects devices over a small geographical area. In star topology,
+each host connects to a central switch. Devices on the same IP subnet
+communicate locally without a router. The switch forwards frames by MAC.
+
+NETWORK DIAGRAM:
+                PC0 (10.1.1.1)
+                       |
+  PC2 (10.1.1.3) -- SWITCH -- PC1 (10.1.1.2)
+                       |
+                PC3 (10.1.1.4)
+
+IP CONFIGURATION TABLE (from the uploaded Practical 4):
+  PC0       10.1.1.1     255.0.0.0    Switch Fa0/1
+  PC1       10.1.1.2     255.0.0.0    Switch Fa0/2
+  PC2       10.1.1.3     255.0.0.0    Switch Fa0/3
+  PC3       10.1.1.4     255.0.0.0    Switch Fa0/4
+  Switch    10.1.1.5     255.0.0.0    VLAN 1 (optional management)
+
+PROCEDURE (PHYSICAL LAN):
+1. Place four computers near a switch and switch on the equipment.
+2. Connect each NIC to a switch Ethernet port using a straight cable.
+3. Open Network Adapter -> IPv4 Properties (Windows) on PC0.
+4. Select 'Use the following IP address'; enter 10.1.1.1, 255.0.0.0.
+5. Repeat for the other PCs as in the table above.
+6. Run ipconfig /all to check the configuration.
+7. From PC0 run: ping 10.1.1.2 ; similarly test the other PCs.
+8. Share a test folder: Properties -> Sharing -> Advanced Sharing/Share.
+9. Grant suitable read access to the intended LAN users only.
+10. From another PC browse \\10.1.1.1\ShareName (if Windows network
+    discovery/firewall/sharing permissions permit) and open the shared file.
+
+PROCEDURE (CISCO PACKET TRACER):
+1. Open Packet Tracer; add four PCs and a 2960 switch.
+2. Connect the PCs to Fa0/1-Fa0/4 with copper straight-through cables.
+3. On every PC go to Desktop -> IP Configuration and enter table values.
+4. Optional switch management IP from Switch -> CLI:
+       enable
+       configure terminal
+       interface vlan 1
+       ip address 10.1.1.5 255.0.0.0
+       no shutdown
+       end
+   [The switch SVI is usable when VLAN 1 has an active associated port.]
+5. Go to PC0 -> Desktop -> Command Prompt, type: ping 10.1.1.2.
+6. Optional simulated resource sharing: connect Server-PT to the switch,
+   set 10.1.1.10 / 255.0.0.0 and enable HTTP in Services -> HTTP.
+7. From a PC Web Browser enter http://10.1.1.10.
+8. In Simulation mode inspect the ARP request/reply and ICMP packets.
+
+SAMPLE OUTPUT:
+  C:\> ping 10.1.1.2
+  Reply from 10.1.1.2: bytes=32 time<1ms TTL=128
+  Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)
+  Browser: HTTP page from server 10.1.1.10 loads successfully.
+
+OBSERVATION:
+All four PCs share the same IP subnet and respond to ping; a shared
+folder or HTTP server can be accessed from another LAN device.
+
+RESULT:
+Thus a four-PC star-topology LAN was configured with static addresses,
+and end-to-end connectivity and resource sharing were verified.
+
+VIVA:
+Q: Why no default gateway here? A: All test PCs are in one subnet.
+Q: What is the function of the switch? A: Layer-2 frame switching.
+
+
+======================================================================
+EXPERIMENT 5 - CAPTURING AND ANALYSING PACKETS IN WIRESHARK
+======================================================================
+AIM:
+To capture network packets using Wireshark, apply protocol filters and
+analyse encapsulation, headers, packet contents and traffic flow.
+
+SOFTWARE REQUIRED: Wireshark and an active network connection.
+
+THEORY:
+Wireshark is a protocol analyser which captures traffic visible to a
+chosen interface and decodes packet fields. Main panes: Packet List,
+Packet Details and Packet Bytes. Network packets contain layered headers
+(e.g., Ethernet, IP, TCP/UDP, application data).
+
+PROCEDURE:
+1. Open Wireshark and select the active Ethernet/Wi-Fi interface.
+2. Click Capture Options and choose an optional 100-packet limit.
+3. Start capture, generate test traffic (browse or ping), then stop.
+4. Save the capture as an .pcapng file via File -> Save As.
+5. In the Display Filter bar, enter the following filters separately:
+       tcp              only TCP packets
+       udp              only UDP packets
+       arp              only ARP packets
+       dns              only DNS messages
+       http             HTTP messages (if unencrypted HTTP exists)
+       icmp             ICMPv4 packets (echo requests/replies)
+       ip               IPv4 packets
+       dhcp || bootp     DHCP/BOOTP traffic (when present)
+       tcp || udp       TCP and UDP packets
+       ip.addr == 10.1.1.2  packets associated with this IP
+6. Select a packet and expand Ethernet, IPv4 and TCP/UDP headers.
+7. Record source/destination MAC, source/destination IP, protocol, port,
+   packet length, flags and selected header fields.
+8. Choose Statistics -> Flow Graph to inspect request-response sequence.
+9. Right-click a TCP packet -> Follow -> TCP Stream when applicable.
+10. Save filtered observations and draw the protocol encapsulation stack.
+
+EXPECTED OBSERVATION / SAMPLE PACKET:
+  No.   Source       Destination  Protocol   Info
+  1     10.1.1.1     10.1.1.2     ICMP       Echo request
+  2     10.1.1.2     10.1.1.1     ICMP       Echo reply
+  Ethernet header -> IPv4 header -> ICMP header -> data.
+  ARP request may appear before the first local unicast transmission.
+
+RESULT:
+Thus packets were captured, filtered by protocols and analysed using
+Wireshark; encapsulated header fields and packet flows were observed.
+
+VIVA:
+Q: What is promiscuous mode? A: Interface passes additional observed
+   frames to the capture process; seeing switched traffic is not guaranteed.
+Q: Does ARP have a TCP/UDP header? A: No, ARP is carried over Ethernet.
+Q: DNS uses which transport? A: Usually UDP/53, also TCP/53.
+Q: HTTP's conventional port? A: TCP 80.
+Q: What is a broadcast IPv4 address? A: 255.255.255.255 is limited
+   broadcast; directed broadcast depends on subnet (e.g. 192.168.1.255/24).
+
+
+======================================================================
+EXPERIMENT 6 - ERROR DETECTION AND CORRECTION USING HAMMING CODE
+======================================================================
+AIM:
+To write sender and receiver logic for Hamming code error detection and
+single-bit correction, transmit encoded text via a channel file, locate
+an introduced error and recover the original text.
+
+THEORY:
+Hamming code adds parity/redundant bits to data so a receiver can locate
+and correct one flipped bit per codeword. For 8 data bits, r parity bits
+must satisfy 2^r >= m+r+1: m=8 and r=4 gives a 12-bit codeword.
+Parity bits are placed at positions 1, 2, 4 and 8 (1-indexed).
+Data bits are at positions 3, 5, 6, 7, 9, 10, 11 and 12.
+We use EVEN parity. At the receiver, failed parity checks form the
+syndrome, the erroneous bit position; syndrome 0 means no detected error.
+Hamming(12,8) corrects one error per codeword; without an extra overall
+parity bit, some multi-bit errors cannot be reliably identified.
+
+ALGORITHM:
+SENDER:
+1. Read input text and convert each character into UTF-8 bytes (ASCII
+   characters use their usual 8-bit ASCII values).
+2. Convert every byte to an 8-bit binary string.
+3. Place 8 data bits into the non-parity positions of a 12-bit word.
+4. Calculate even parity bits at positions 1, 2, 4 and 8.
+5. Write one 12-bit codeword per line to a file named 'channel'.
+RECEIVER:
+1. Read each 12-bit codeword from 'channel'.
+2. Recalculate parity checks; sum failing parity positions (syndrome).
+3. If the syndrome is 1..12, report and flip that bit.
+4. Extract the eight original data bits, assemble bytes and decode text.
+5. Display reconstructed original message.
+
+PYTHON PROGRAM: SENDER (save as sender_hamming.py)
+-------------------------------------------------
+from pathlib import Path
+
+DATA_POS = [3, 5, 6, 7, 9, 10, 11, 12]
+PARITY_POS = [1, 2, 4, 8]
+
+def encode_byte(byte):
+    data = f"{byte:08b}"
+    bits = [0] * 13                # use positions 1..12
+    for pos, char in zip(DATA_POS, data):
+        bits[pos] = int(char)
+    for p in PARITY_POS:
+        bits[p] = sum(bits[i] for i in range(1, 13)
+                      if (i & p) and i != p) % 2
+    return ''.join(str(bits[i]) for i in range(1, 13))
+
+text = input("Enter text to send: ")
+encoded = [encode_byte(b) for b in text.encode("utf-8")]
+Path("channel").write_text('\n'.join(encoded) + '\n')
+print("Text converted to binary and Hamming encoded.")
+print("Codewords stored in channel:")
+print('\n'.join(encoded))
+
+PYTHON PROGRAM: RECEIVER (save as receiver_hamming.py)
+-----------------------------------------------------
+from pathlib import Path
+
+DATA_POS = [3, 5, 6, 7, 9, 10, 11, 12]
+PARITY_POS = [1, 2, 4, 8]
+
+def decode_word(word, number):
+    if len(word) != 12 or any(c not in '01' for c in word):
+        raise ValueError("Channel must contain 12-bit binary words")
+    bits = [0] + [int(c) for c in word]
+    syndrome = 0
+    for p in PARITY_POS:
+        if sum(bits[i] for i in range(1, 13) if i & p) % 2:
+            syndrome += p
+    if syndrome:
+        if syndrome > 12:
+            raise ValueError("Invalid syndrome (possible multiple errors)")
+        print(f"Codeword {number}: Error at bit position {syndrome}")
+        bits[syndrome] ^= 1
+    else:
+        print(f"Codeword {number}: No error detected")
+    data_bits = ''.join(str(bits[pos]) for pos in DATA_POS)
+    return int(data_bits, 2)
+
+words = Path("channel").read_text().splitlines()
+received = bytes(decode_word(word, i) for i, word in enumerate(words, 1))
+print("Recovered text:", received.decode("utf-8", errors="replace"))
+
+TEST RUN / SAMPLE OUTPUT:
+  Sender input: Hi
+  channel: two lines, each containing 12 binary digits.
+  Receiver before error: No error detected in either codeword.
+  To test correction: change any ONE bit in the first channel line,
+  e.g., flip position 5 (counting from the LEFT, starting at 1).
+  Receiver output:
+  Codeword 1: Error at bit position 5
+  Codeword 2: No error detected
+  Recovered text: Hi
+
+RESULT:
+Thus Hamming code encoding, redundant parity-bit generation, error
+position detection and single-bit correction were implemented and tested.
+
+VIVA:
+Q: Formula for parity bit count? A: 2^r >= m+r+1.
+Q: Where are parity bits? A: Powers of 2: 1, 2, 4, 8, ...
+Q: What does nonzero syndrome mean? A: It locates a single erroneous bit
+   in standard Hamming decoding, assuming at most one bit was corrupted.
+
+
+======================================================================
+EXPERIMENT 7 - FLOW CONTROL USING SLIDING WINDOW PROTOCOL
+======================================================================
+AIM:
+To simulate transfer of numbered data frames with Sliding Window flow
+control and show acknowledgements, negative acknowledgements and
+retransmission when an error occurs.
+
+THEORY:
+Sliding Window permits multiple frames in transit, up to the window
+size, without waiting for each individual ACK. A frame contains
+[FRAME NUMBER, DATA]. After receiving correct frames, the receiver sends
+an ACK with the next expected frame number. An error produces NACK and
+triggers retransmission in this simplified Go-Back-N demonstration.
+The manual specifies text with one character per frame, Sender_Buffer and
+Receiver_Buffer files, a delay, and controlled corruption to test NACK.
+
+ALGORITHM:
+1. Read window size W and input text from the sender.
+2. Assign frame numbers 1..N to characters of the text.
+3. Sender writes up to W frames into Sender_Buffer and waits.
+4. Receiver reads the sender buffer and compares numbers with expected.
+5. If correct, it writes ACK <next expected number> to Receiver_Buffer.
+6. If wrong, it writes NACK <expected number>.
+7. Sender reads receiver response, slides window for ACK or retransmits
+   the existing window for NACK.
+8. Repeat until all characters are transferred.
+
+PYTHON PROGRAM (compact sender/receiver simulation, both file buffers):
+Save as sliding_window.py. Receiver logic is in a separate function,
+which may also be split into its own script for an exercise.
+--------------------------------------------------------------------
+from pathlib import Path
+import time
+
+SENDER = Path("Sender_Buffer")
+RECEIVER = Path("Receiver_Buffer")
+
+def receive_window(lines, expected):
+    """Check frame sequence and write next-expected ACK or NACK."""
+    for line in lines:
+        number, data = line.split("|", 1)
+        number = int(number)
+        if number != expected:
+            reply = f"NACK {expected}"
+            RECEIVER.write_text(reply)
+            return reply
+        expected += 1
+    reply = f"ACK {expected}"
+    RECEIVER.write_text(reply)
+    return reply
+
+window_size = int(input("Enter window size: "))
+message = input("Enter text: ")
+inject = input("Simulate one wrong frame number? (y/n): ").lower() == "y"
+if window_size < 1:
+    raise ValueError("Window size must be positive")
+
+base = 0
+error_done = False
+while base < len(message):
+    frames = [(i + 1, message[i]) for i in
+              range(base, min(base + window_size, len(message)))]
+    lines = [f"{n}|{char}" for n, char in frames]
+    SENDER.write_text('\n'.join(lines) + '\n')
+    print("Sender window:", frames)
+    print("Waiting for ACK...")
+    time.sleep(0.5)
+
+    # For demonstration, simulate an altered frame number once.
+    observed = lines.copy()
+    if inject and not error_done:
+        n, data = observed[0].split("|", 1)
+        observed[0] = f"{int(n) + 1}|{data}"
+        error_done = True
+        print("Simulated incorrect received frame:", observed[0])
+
+    response = receive_window(observed, expected=base + 1)
+    print("Receiver response:", response)
+    action, number = RECEIVER.read_text().split()
+    if action == "ACK":
+        base = int(number) - 1   # the next unacknowledged frame index
+    else:
+        print("NACK received: retransmitting window")
+
+print("All frames acknowledged; transmitted:", message)
+
+SAMPLE INPUT:
+  Enter window size: 3
+  Enter text: HELLO
+  Simulate one wrong frame number? (y/n): y
+
+SAMPLE OUTPUT (abridged):
+  Sender window: [(1, 'H'), (2, 'E'), (3, 'L')]
+  Simulated incorrect received frame: 2|H
+  Receiver response: NACK 1
+  NACK received: retransmitting window
+  Sender window: [(1, 'H'), (2, 'E'), (3, 'L')]
+  Receiver response: ACK 4
+  Sender window: [(4, 'L'), (5, 'O')]
+  Receiver response: ACK 6
+  All frames acknowledged; transmitted: HELLO
+
+OBSERVATION:
+At most W frames were sent per window. A corrupted frame number caused
+NACK; correct retransmission produced ACK and moved the window forward.
+
+RESULT:
+Thus Sliding Window flow control and error recovery by retransmission
+were simulated using frame numbers, ACK/NACK and file-based buffers.
+
+VIVA:
+Q: What is window size? A: Maximum number of unacknowledged frames
+   permitted in the sender's current transmission window.
+Q: Why sliding window? A: Improves link use compared with stop-and-wait.
+Q: What is Go-Back-N? A: Retransmit from a missing/incorrect frame onward.
+
+
+======================================================================
+EXPERIMENT 8 - LIVE HOST DISCOVERY USING NMAP (TRYHACKME)
+======================================================================
+AIM:
+To discover active hosts using Nmap and explore ARP, ICMP, TCP and UDP
+host-discovery techniques on the authorised TryHackMe Nmap room.
+
+PLATFORM / REQUIREMENTS:
+TryHackMe room 'Nmap Live Host Discovery':
+https://tryhackme.com/room/nmap01
+Linux AttackBox or authorised practice VM with Nmap; permission to scan.
+
+THEORY:
+Nmap (Network Mapper) identifies target IP addresses and determines
+which hosts are reachable. Discovery methods include:
+  ARP:  local-network broadcast/reply to identify IP/MAC neighbours.
+  ICMP: Echo, timestamp or address-mask requests and replies.
+  TCP: SYN/ACK probe; RST or SYN/ACK may indicate a live machine.
+  UDP: If probing a closed UDP port, an ICMP Port Unreachable reply may
+       indicate the target is active.
+ARP requests are not routed between subnets. 'nmap -sn' performs host
+identification without normal port scanning. Firewalls may suppress
+responses and therefore cause false negatives.
+
+PROCEDURE:
+1. Open the Nmap Live Host Discovery room in TryHackMe.
+2. Start its AttackBox and any authorised target machine.
+3. Determine the authorised target or lab subnet shown in the room.
+4. Run host discovery for your lab subnet:
+       nmap -sn 10.10.10.0/24
+5. Run ARP discovery on a permitted local subnet (root often required):
+       sudo nmap -PR -sn 10.10.10.0/24
+6. Run ICMP Echo discovery:
+       sudo nmap -PE -sn 10.10.10.0/24
+7. Try ICMP timestamp and address-mask probes where applicable:
+       sudo nmap -PP -sn 10.10.10.0/24
+       sudo nmap -PM -sn 10.10.10.0/24
+8. Try TCP SYN / ACK discovery on test addresses:
+       sudo nmap -PS80,443 -sn 10.10.10.0/24
+       sudo nmap -PA80 -sn 10.10.10.0/24
+9. Try UDP host probes:
+       sudo nmap -PU53 -sn 10.10.10.0/24
+10. List target names without scanning (may trigger DNS lookup):
+       nmap -sL 10.10.10.0/24
+11. Avoid reverse DNS lookup with the -n option, or request reverse DNS
+    with -R where supported. Record which hosts replied in each test.
+
+IMPORTANT OPTIONS:
+  -sn       Host discovery, no standard port scan.
+  -PR       ARP ping.       -PE      ICMP Echo ping.
+  -PP       ICMP Timestamp. -PM      ICMP Address Mask.
+  -PS80     TCP SYN ping to port 80.
+  -PA80     TCP ACK ping to port 80.
+  -PU53     UDP ping on port 53.
+  -n        No reverse DNS. -R       Reverse DNS for all targets.
+
+SAMPLE OUTPUT (illustrative):
+  $ nmap -sn 10.10.10.0/24
+  Nmap scan report for 10.10.10.5
+  Host is up.
+  Nmap scan report for 10.10.10.20
+  Host is up.
+  Nmap done: 256 IP addresses (2 hosts up) scanned.
+
+OBSERVATION:
+ARP identifies neighbours on the same LAN. ICMP requests may find hosts
+that answer Echo. TCP/UDP probes help when ICMP is filtered. Counts vary
+according to firewall policy, host state and privilege level.
+
+RESULT:
+Thus live-host discovery using Nmap ARP, ICMP and TCP/UDP scans was
+studied on the permitted TryHackMe practice environment.
+
+VIVA:
+Q: Which option avoids port scanning? A: -sn.
+Q: Which option is for ARP? A: -PR.
+Q: Does ARP cross routers? A: No.
+Q: Which Nmap option sends ICMP Echo? A: -PE.
+
+
+---------------------------------------------------------------------
+SUPPLEMENT TO EXPERIMENT 8 - CONFIGURE A WIRELESS LAN (MANUAL'S 8b)
+---------------------------------------------------------------------
+NOTE: The manual separately labels this wireless exercise 'Practical-8(b)',
+although its official list places wireless internetworking under 10(b).
+It is included here so the supplied content is not missed.
+
+AIM: To create a wireless LAN using a wireless router and three PCs.
+
+PROCEDURE:
+1. In Cisco Packet Tracer, place a Linksys WRT300N wireless router
+   and three wireless-capable computers.
+2. Configure wireless router LAN IP: 192.168.0.1 / 255.255.255.0.
+3. Set the wireless network name/SSID to MotherNetwork.
+4. The lab manual uses WEP with key 0123456789 (for historic simulation
+   only); for any real wireless deployment, use WPA2-AES/WPA3 instead.
+5. On PC0, PC1 and PC2 set static IPs respectively:
+      PC0  192.168.0.2 / 24  gateway 192.168.0.1
+      PC1  192.168.0.3 / 24  gateway 192.168.0.1
+      PC2  192.168.0.4 / 24  gateway 192.168.0.1
+6. PC -> Desktop -> PC Wireless -> Connect -> Refresh.
+7. Select MotherNetwork; provide the configured wireless security key.
+8. Repeat for the remaining PCs, ping the router and each other.
+
+SAMPLE OUTPUT: Wireless connected to MotherNetwork, ping successful.
+RESULT: Thus wireless LAN connectivity using a wireless router was
+configured and verified in Packet Tracer.
+
+
+======================================================================
+EXPERIMENT 9 - SUBNETTING IN CISCO PACKET TRACER
+======================================================================
+AIM:
+To divide an IP network into subnets, assign static IP addresses,
+connect different subnets using a router and verify packet transfer.
+
+THEORY:
+Subnetting divides a large network into smaller logical IP networks.
+A subnet mask separates network bits and host bits. For a /27 subnet,
+mask is 255.255.255.224, each subnet has 32 addresses and 30 usable
+host addresses; a /24 divided into /27 yields eight subnets.
+Devices within the same subnet communicate via switches, while packets
+between different subnets require a router or Layer-3 switching.
+
+EXAMPLE TOPOLOGY (compact valid two-subnet demonstration):
+ PC-A (192.168.1.10/27) -- Switch0 -- Router -- Switch1 -- PC-B
+             Network A       |           |         Network B
+                    G0/0 .1/27       G0/1 .33/27
+                             PC-B = 192.168.1.42/27
+
+ADDRESSING TABLE:
+  Device    IP address       Mask               Default Gateway
+  PC-A      192.168.1.10     255.255.255.224    192.168.1.1
+  Router G0/0 192.168.1.1    255.255.255.224    N/A
+  Router G0/1 192.168.1.33   255.255.255.224    N/A
+  PC-B      192.168.1.42     255.255.255.224    192.168.1.33
+  Subnet A = 192.168.1.0/27; hosts .1..30; broadcast .31
+  Subnet B = 192.168.1.32/27; hosts .33..62; broadcast .63
+
+NOTE: The source's longer subnetting example shows multiple LANs and
+routers; this two-LAN address plan is a simplified, internally consistent
+exam setup using the same /27 concept. Extend the diagram with additional
+subnets and routers when your lab requires four LANs.
+
+PROCEDURE:
+1. Open Packet Tracer and add two PCs, two switches and one router.
+2. Connect each PC to its switch; join switches to separate router ports.
+3. Set PC IPv4 configuration as shown in the table.
+4. Open router CLI and enter (change names for your router model):
+       enable
+       configure terminal
+       interface gigabitEthernet 0/0
+       ip address 192.168.1.1 255.255.255.224
+       no shutdown
+       exit
+       interface gigabitEthernet 0/1
+       ip address 192.168.1.33 255.255.255.224
+       no shutdown
+       end
+       show ip interface brief
+       show ip route
+5. From PC-A ping 192.168.1.42; verify ICMP success.
+6. Switch to Simulation mode; send Simple PDU PC-A -> PC-B.
+7. Disconnect both subnets from the router and repeat: inter-subnet
+   communication cannot occur over the disconnected path.
+8. Record packet events and compare connected/disconnected behaviour.
+
+SAMPLE OUTPUT:
+  PC-A> ping 192.168.1.42
+  Reply from 192.168.1.42: bytes=32 time<1ms TTL=127
+  PDU: PC-A -> Router -> PC-B | ICMP | Successful
+
+OBSERVATION:
+Same-subnet hosts can exchange frames through a switch. Different
+subnets communicate when the router interfaces/gateways are configured.
+
+RESULT:
+Thus subnetting was performed and inter-subnet communication through
+a router was configured and simulated successfully.
+
+VIVA:
+Q: Usable hosts in /27? A: 2^5 - 2 = 30.
+Q: Mask for /27? A: 255.255.255.224.
+Q: Purpose of default gateway? A: Sends packets for remote networks.
+
+
+======================================================================
+EXPERIMENT 10 - INTERNETWORKING USING ROUTERS IN PACKET TRACER
+======================================================================
+AIM:
+(a) To design and configure an internetwork using a router.
+(b) To create a wireless-router network using DHCP, an Internet cloud
+    and a server.
+(c) To set up an inter-network using switches, router and Ethernet
+    cables in the laboratory.
+
+THEORY:
+A router is a Layer-3 device used to forward IP packets between
+networks. Each directly connected network must have a correctly addressed
+router interface. End devices must use the router's local interface as
+their default gateway. DHCP automatically leases client IP addresses,
+subnet masks, gateways and DNS settings.
+
+PART A - SIMPLE ROUTER INTERNETWORKING
+------------------------------------
+TOPOLOGY: PC0 ------ Router1 ------ PC1
+
+ADDRESSING TABLE (matches manual's simple example):
+  Router1 Fa0/0   192.168.10.1   255.255.255.0
+  PC0             192.168.10.2   255.255.255.0   GW 192.168.10.1
+  Router1 Fa0/1   192.168.20.1   255.255.255.0
+  PC1             192.168.20.2   255.255.255.0   GW 192.168.20.1
+
+PROCEDURE:
+1. Open Cisco Packet Tracer and drag a router and two PCs.
+2. Connect PC0 to router Fa0/0 and PC1 to Fa0/1 using suitable cables.
+3. Assign static IP, subnet mask and default gateway on both PCs.
+4. Configure router CLI (use actual available interface names):
+       enable
+       configure terminal
+       interface fastEthernet 0/0
+       ip address 192.168.10.1 255.255.255.0
+       no shutdown
+       exit
+       interface fastEthernet 0/1
+       ip address 192.168.20.1 255.255.255.0
+       no shutdown
+       end
+       show ip interface brief
+       show ip route
+5. From PC0 -> Desktop -> Command Prompt: ping 192.168.20.2.
+6. Send Simple PDU from PC0 to PC1 in Simulation mode and observe the
+   ICMP Echo Request and Echo Reply travelling through the router.
+
+SAMPLE OUTPUT:
+  PC0> ping 192.168.20.2
+  Reply from 192.168.20.2: bytes=32 time<1ms TTL=127
+  Simulation -> ICMP -> Successful
+
+OBSERVATION: The router forwards traffic between 192.168.10.0/24 and
+192.168.20.0/24 and replies travel in the reverse direction.
+
+PART B - WIRELESS ROUTER + DHCP + INTERNET CLOUD + SERVER
+---------------------------------------------------------
+AIM: To design a network with a wireless router, laptop, wired PC,
+cable modem, Internet cloud and simulated Cisco.com server.
+
+TOPOLOGY:
+  PC -- Wireless Router -- Cable Modem -- Internet Cloud -- Server
+             )))
+           Laptop
+
+CONFIGURATION FROM LAB MANUAL:
+  Wireless router LAN IP: 192.168.0.1 / 255.255.255.0
+  PC Ethernet0: DHCP; LAN gateway 192.168.0.1
+  Laptop Wireless0: DHCP
+  Wireless router Internet interface: DHCP
+  Cisco.com server: 208.67.220.220 / 255.255.255.0
+  Sample SSID in this experiment: HomeNetwork
+
+PROCEDURE:
+1. In Packet Tracer add a PC, wireless router, laptop, cable modem,
+   Internet cloud and a server; arrange them as the diagram above.
+2. Connect PC to router with straight cable. Connect wireless router
+   Internet port to cable modem; cable modem to cloud with coaxial cable;
+   cloud to server with an appropriate Ethernet connection.
+3. On wireless router -> GUI -> Wireless, set SSID HomeNetwork.
+4. On router -> GUI -> Setup, enable DHCP server for the LAN, set local
+   IP 192.168.0.1 /24, and DNS as 208.67.220.220; save settings.
+5. On Laptop -> Physical, switch off, install wireless adapter (if not
+   already available), power on, open Desktop -> PC Wireless and connect
+   to HomeNetwork.
+6. On PC -> Desktop -> IP Configuration, choose DHCP.
+7. On server -> Config -> FastEthernet, assign 208.67.220.220/24;
+   configure suitable gateway/cloud connectivity for your topology.
+8. On server -> Services -> DNS, enable and add an A record:
+       Name: Cisco.com       Address: 208.67.220.220
+9. If using the manual's server-side DHCP demonstration, configure the
+   appropriate DHCP pool. In this topology local clients ordinarily get
+   leases from the WIRELESS ROUTER, not from the remote server.
+10. Open PC Command Prompt and execute:
+       ipconfig /all
+       ipconfig /release
+       ipconfig /renew
+       ping 192.168.0.1
+       ping Cisco.com
+11. Verify successful IP assignment, DNS resolution and network reach.
+    DNS/server ping succeeds only if all cloud-side links, gateways and
+    simulated services are configured properly.
+
+SAMPLE OUTPUT:
+  PC address: 192.168.0.x
+  Mask: 255.255.255.0
+  Gateway: 192.168.0.1
+  ping 192.168.0.1: Reply from 192.168.0.1
+  ping Cisco.com: Reply from 208.67.220.220 (if topology is routed)
+
+PART C - PHYSICAL LAB INTERNETWORK
+---------------------------------
+AIM: To connect different LANs using switches, router and cables.
+
+PROCEDURE:
+1. Form two LAN groups of 3-4 hosts using two switches and a router.
+2. Connect hosts to switches; connect each switch to a router interface.
+3. Assign subnet A addresses 192.168.10.x/24 and subnet B addresses
+   192.168.20.x/24.
+4. Set router interface IPs to 192.168.10.1/24 and 192.168.20.1/24.
+5. Set each PC's gateway to the appropriate router IP.
+6. Use ping/tracert to demonstrate communication across the router.
+7. Note port numbers, IP tables, link LEDs and actual observed outcomes.
+
+RESULT:
+Thus router-based internetwork communication and wireless/DHCP
+configuration were designed, configured and verified in Packet Tracer.
+
+VIVA:
+Q: Router works at which layer? A: Network layer (Layer 3).
+Q: DHCP purpose? A: Automatic IP network configuration/lease assignment.
+Q: DNS purpose? A: Resolve domain names to IP addresses (among others).
+
+
+======================================================================
+EXPERIMENT 11 - ROUTING: STATIC ROUTES AND RIP
+======================================================================
+AIM:
+(a) To configure and verify static routes using Cisco Packet Tracer.
+(b) To implement RIP dynamic routing and observe path selection and
+    route updates after a link failure.
+
+THEORY:
+A routing table lists known destination networks and next hops.
+Static routing requires administrator-specified route entries; RIP is a
+distance-vector dynamic routing protocol that uses hop count as its metric.
+RIP's maximum valid hop count is 15; hop count 16 is unreachable.
+RIPv2 supports CIDR/VLSM and is used in the following example.
+
+PART A - STATIC ROUTING
+-----------------------
+TOPOLOGY:
+ PC0 --- R0 -------- R1 --- PC1
+  LAN A      link      LAN B
+
+IP ADDRESS TABLE (compact illustrative network):
+  PC0         10.0.0.2/24       gateway 10.0.0.1
+  R0 G0/0     10.0.0.1/24       LAN A
+  R0 G0/1     192.168.12.1/30   router interconnection
+  R1 G0/1     192.168.12.2/30   router interconnection
+  R1 G0/0     20.0.0.1/24       LAN B
+  PC1         20.0.0.2/24       gateway 20.0.0.1
+
+PROCEDURE:
+1. Place two routers, two PCs (and switches if needed) in Packet Tracer.
+2. Cable devices and configure all interfaces from the address table.
+3. Router0 CLI:
+       enable
+       configure terminal
+       interface gigabitEthernet 0/0
+       ip address 10.0.0.1 255.255.255.0
+       no shutdown
+       exit
+       interface gigabitEthernet 0/1
+       ip address 192.168.12.1 255.255.255.252
+       no shutdown
+       exit
+       ip route 20.0.0.0 255.255.255.0 192.168.12.2
+       end
+4. Router1 CLI:
+       enable
+       configure terminal
+       interface gigabitEthernet 0/0
+       ip address 20.0.0.1 255.255.255.0
+       no shutdown
+       exit
+       interface gigabitEthernet 0/1
+       ip address 192.168.12.2 255.255.255.252
+       no shutdown
+       exit
+       ip route 10.0.0.0 255.255.255.0 192.168.12.1
+       end
+5. Assign both PCs the IP/mask/default gateway shown above.
+6. Execute 'show ip route' and 'show ip route static' on both routers.
+7. Ping PC1 (20.0.0.2) from PC0 (10.0.0.2).
+8. Run tracert 20.0.0.2 (from PC0) to observe hop sequence.
+
+OPTIONAL MAIN/BACKUP ROUTES FROM THE LAB MANUAL:
+On a topology with TWO physically valid paths, lower administrative
+distance is preferred. The manual's example shows:
+    ip route 30.0.0.0 255.0.0.0 20.0.0.2 10
+    ip route 30.0.0.0 255.0.0.0 40.0.0.2 20
+The first path (distance 10) is preferred; the other (distance 20) is a
+floating static backup if its next hop is actually reachable.
+An individual host route uses /32, e.g.:
+    ip route 30.0.0.100 255.255.255.255 40.0.0.2 10
+A router may have a different route for a /32 host than for its /8 LAN
+because longest-prefix match takes priority.
+
+OBSERVATION:
+Route entries marked S are static. Traffic uses the manually configured
+next hop, and a correctly designed backup route may take over on failure.
+
+PART B - DYNAMIC ROUTING USING RIP
+----------------------------------
+TOPOLOGY:
+  PC0 -- R0 ----- R2 -- PC1
+          \       /
+            R1
+(Three routers form a triangle; R0-R2 direct route and R0-R1-R2 backup.)
+
+ADDRESSING TABLE (based on lab manual and handwritten observation):
+  PC0         10.0.0.2/8      gateway 10.0.0.1
+  R0 LAN      10.0.0.1/8
+  R0-R1      192.168.1.249/30 (R0), 192.168.1.250/30 (R1)
+  R1-R2      192.168.1.246/30 (R1), 192.168.1.245/30 (R2)
+  R0-R2      192.168.1.254/30 (R0), 192.168.1.253/30 (R2)
+  R2 LAN      20.0.0.1/30
+  PC1         20.0.0.2/30    gateway 20.0.0.1
+
+PROCEDURE:
+1. In Packet Tracer add three routers and two PCs as the topology.
+2. Assign PC addresses/gateways from the table.
+3. Configure each router LAN/serial interface using this pattern:
+       enable
+       configure terminal
+       interface <actual interface name>
+       ip address <interface IP> <subnet mask>
+       no shutdown
+       exit
+   Serial interface clock rate (on DCE side only), if required:
+       interface serial 0/0/0
+       clock rate 64000
+       no shutdown
+       exit
+4. Enable RIPv2 (adapt the exact network statements to IOS/router):
+   On Router0:
+       router rip
+       version 2
+       no auto-summary
+       network 10.0.0.0
+       network 192.168.1.0
+       exit
+   On Router1:
+       router rip
+       version 2
+       no auto-summary
+       network 192.168.1.0
+       exit
+   On Router2:
+       router rip
+       version 2
+       no auto-summary
+       network 20.0.0.0
+       network 192.168.1.0
+       exit
+   [Depending on Packet Tracer version, the network command identifies
+   the major network containing the connected 192.168.1.x subnets.]
+5. Save or exit config and run:
+       show ip route
+       show ip protocols
+       show ip interface brief
+6. Ping PC1 from PC0, then use tracert 20.0.0.2.
+7. Observe that the shortest-hop R0 -> R2 route is normally selected.
+8. Disconnect the R0-R2 cable or shut down that interface.
+9. Wait for RIP to reconverge; repeat ping/tracert. The new path should
+   use R0 -> R1 -> R2 if that path remains reachable.
+10. Restore the link and observe route updates.
+
+SAMPLE OUTPUT:
+  R 20.0.0.0/30 [120/1] via 192.168.1.253  [on R0, normal case]
+  PC0> ping 20.0.0.2
+  Reply from 20.0.0.2: bytes=32 time=... TTL=...
+  Tracert: R0 -> R2 -> PC1
+  After R0-R2 fails: R0 -> R1 -> R2 -> PC1 (after convergence)
+
+OBSERVATION:
+Static routing requires manual path specification. RIP dynamically
+exchanges route information, prefers low hop count and can select an
+alternative path after a link failure.
+
+RESULT:
+Thus static routing and RIP dynamic routing were configured and their
+routing-table and packet-forwarding behaviour were verified.
+
+VIVA:
+Q: Command to display routes? A: show ip route.
+Q: Static-route command form? A: ip route DEST MASK NEXT_HOP.
+Q: RIP metric? A: Number of hops.
+Q: RIP maximum usable hop count? A: 15 (16 means unreachable).
+Q: What is administrative distance? A: Router preference between
+   different sources of route information; lower is generally preferred.
+
+
+======================================================================
+EXPERIMENT 12 - TCP/UDP ECHO AND CHAT USING SOCKET PROGRAMMING
+======================================================================
+AIM:
+(a) To implement echo client-server communication using TCP and UDP.
+(b) To implement a two-way chat program using socket programming.
+
+THEORY:
+A socket identifies a communication endpoint (IP address, port,
+transport protocol). TCP provides connection-oriented reliable byte
+streams; UDP sends connectionless datagrams without guaranteed delivery.
+An echo server returns the message sent by a client. For a chat, both
+peers send and receive messages, possibly using separate threads.
+
+GENERAL TCP ALGORITHM:
+SERVER: socket() -> bind() -> listen() -> accept() -> recv() -> sendall()
+        -> close().
+CLIENT: socket() -> connect() -> sendall() -> recv() -> close().
+UDP: socket(SOCK_DGRAM) -> sendto()/recvfrom(); no listen()/accept().
+
+PART A1 - TCP ECHO SERVER (save as tcp_server.py)
+------------------------------------------------
+import socket
+
+HOST, PORT = "127.0.0.1", 5000
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server.bind((HOST, PORT))
+    server.listen(1)
+    print("[SERVER] Listening on", HOST, PORT)
+    conn, address = server.accept()
+    with conn:
+        print("[SERVER] Connected by", address)
+        while True:
+            data = conn.recv(1024)
+            if not data or data.decode().lower() == "quit":
+                break
+            print("[SERVER] Received:", data.decode())
+            conn.sendall(b"Server received: " + data)
+print("[SERVER] Connection closed")
+
+PART A1 - TCP ECHO CLIENT (save as tcp_client.py)
+------------------------------------------------
+import socket
+
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
+    client.connect(("127.0.0.1", 5000))
+    print("[CLIENT] Connected to server")
+    while True:
+        msg = input("Enter message ('quit' to exit): ")
+        client.sendall(msg.encode())
+        if msg.lower() == "quit":
+            break
+        reply = client.recv(1024).decode()
+        print("[SERVER RESPONSE]", reply)
+
+RUN:
+Terminal 1: python tcp_server.py
+Terminal 2: python tcp_client.py
+
+TCP SAMPLE OUTPUT:
+  [SERVER] Listening on 127.0.0.1 5000
+  [CLIENT] Connected to server
+  Enter message ('quit' to exit): Hello
+  [SERVER RESPONSE] Server received: Hello
+  Enter message ('quit' to exit): quit
+  [SERVER] Connection closed
+
+PART A2 - UDP ECHO SERVER (save as udp_server.py)
+------------------------------------------------
+import socket
+
+with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as server:
+    server.bind(("127.0.0.1", 12000))
+    print("[SERVER] Running on 127.0.0.1:12000")
+    while True:
+        data, address = server.recvfrom(1024)
+        msg = data.decode()
+        if msg.lower() == "quit":
+            print("[SERVER] Client requested stop")
+            break
+        print("[SERVER] Received from", address, ":", msg)
+        server.sendto(("Echo from server: " + msg).encode(), address)
+print("[SERVER] Stopped")
+
+PART A2 - UDP ECHO CLIENT (save as udp_client.py)
+------------------------------------------------
+import socket
+
+with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as client:
+    server_address = ("127.0.0.1", 12000)
+    client.settimeout(5)
+    while True:
+        msg = input("Enter message ('quit' to stop): ")
+        client.sendto(msg.encode(), server_address)
+        if msg.lower() == "quit":
+            break
+        try:
+            reply, address = client.recvfrom(1024)
+            print("[CLIENT]", reply.decode())
+        except socket.timeout:
+            print("No reply within 5 seconds")
+
+RUN:
+Terminal 1: python udp_server.py
+Terminal 2: python udp_client.py
+
+UDP SAMPLE OUTPUT:
+  [SERVER] Running on 127.0.0.1:12000
+  Enter message ('quit' to stop): Hi
+  [CLIENT] Echo from server: Hi
+  Enter message ('quit' to stop): quit
+  [SERVER] Stopped
+
+PART B - TWO-WAY CHAT USING TCP (save as tcp_chat.py)
+----------------------------------------------------
+Start the SAME program in two terminals using different arguments.
+This is a compact exam illustration of simultaneous send and receive.
+
+import socket
+import sys
+import threading
+
+if len(sys.argv) != 2 or sys.argv[1] not in ("server", "client"):
+    raise SystemExit("Use: python tcp_chat.py server | client")
+role = sys.argv[1]
+listener = None
+if role == "server":
+    listener = socket.socket()
+    listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    listener.bind(("127.0.0.1", 6000))
+    listener.listen(1)
+    print("Waiting for client...")
+    sock, addr = listener.accept()
+else:
+    sock = socket.create_connection(("127.0.0.1", 6000))
+print("Chat connected. Type /quit to exit.")
+
+def read_messages():
+    while True:
+        try:
+            packet = sock.recv(1024)
+            if not packet:
+                print("\nPeer disconnected")
+                break
+            print("\nPeer:", packet.decode())
+        except OSError:
+            break
+
+threading.Thread(target=read_messages, daemon=True).start()
+try:
+    while True:
+        message = input("You: ")
+        if message == "/quit":
+            break
+        sock.sendall(message.encode())
+finally:
+    sock.close()
+    if listener is not None:
+        listener.close()
+
+RUN:
+Terminal 1: python tcp_chat.py server
+Terminal 2: python tcp_chat.py client
+Each terminal types a message and the other terminal displays it.
+
+PART B - OPTIONAL UDP CHAT (save as udp_chat.py)
+-----------------------------------------------
+import socket
+import sys
+import threading
+
+if len(sys.argv) != 2 or sys.argv[1] not in ("a", "b"):
+    raise SystemExit("Use: python udp_chat.py a | b")
+my_port, other_port = (7000, 7001) if sys.argv[1] == "a" else (7001, 7000)
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.bind(("127.0.0.1", my_port))
+
+def read_messages():
+    while True:
+        try:
+            data, addr = sock.recvfrom(2048)
+            print("\nPeer:", data.decode())
+        except OSError:
+            break
+
+threading.Thread(target=read_messages, daemon=True).start()
+try:
+    while True:
+        msg = input("You: ")
+        if msg == "/quit":
+            break
+        sock.sendto(msg.encode(), ("127.0.0.1", other_port))
+finally:
+    sock.close()
+
+RUN: python udp_chat.py a   (terminal 1)
+     python udp_chat.py b   (terminal 2)
+
+OBSERVATION:
+- TCP: Connection is established before messages are exchanged.
+- UDP: Datagram is sent directly to destination IP/port.
+- Echo returns client text; chat allows peers to exchange messages.
+- 127.0.0.1 refers to the local machine. For two different computers,
+  replace 127.0.0.1 with the actual server's reachable LAN address and
+  ensure firewall rules permit the chosen test ports.
+
+RESULT:
+Thus echo communication over TCP/UDP and a client-server chat using
+socket programming were implemented and tested.
+
+VIVA:
+Q: Socket types? A: SOCK_STREAM for TCP; SOCK_DGRAM for UDP.
+Q: Does UDP guarantee delivery/order? A: No.
+Q: TCP server functions? A: bind, listen, accept, recv, sendall.
+Q: Port numbers in these examples? A: 5000 TCP echo, 12000 UDP echo,
+   6000 TCP chat, and 7000/7001 for UDP chat.
+
+
+======================================================================
+EXPERIMENT 13 - IMPLEMENT YOUR OWN PING PROGRAM
+======================================================================
+AIM:
+To write a Python program to send ping requests to a host and display
+whether it is reachable along with response information.
+
+THEORY:
+The operating system's ping command sends ICMP Echo Request packets and
+checks for Echo Replies. Received replies contain round-trip time (RTT)
+statistics. The uploaded handwritten observation uses Python subprocess
+to invoke the system's ping utility. This is a ping WRAPPER, not an
+independent implementation of ICMP packet construction.
+
+ALGORITHM:
+1. Read a destination hostname or IP address.
+2. Detect Windows or Linux/macOS environment.
+3. Form the suitable ping command with count 4.
+4. Execute the command using subprocess.run and capture its output.
+5. Print replies or errors; indicate successful or failed status.
+
+PYTHON PROGRAM (save as ping_program.py):
+----------------------------------------
+import platform
+import subprocess
+
+host = input("Enter host to ping (e.g. 8.8.8.8): ").strip()
+if not host:
+    raise SystemExit("Host must not be empty")
+count_flag = "-n" if platform.system().lower() == "windows" else "-c"
+command = ["ping", count_flag, "4", host]
+
+try:
+    result = subprocess.run(command, capture_output=True, text=True,
+                            timeout=30, check=False)
+    print(result.stdout or result.stderr)
+    if result.returncode == 0:
+        print("Host is reachable")
+    else:
+        print("Host unreachable or ping failed")
+except FileNotFoundError:
+    print("ping executable not found on this system")
+except subprocess.TimeoutExpired:
+    print("Ping command timed out")
+
+SAMPLE INPUT: 8.8.8.8
+SAMPLE OUTPUT (abridged):
+  Pinging 8.8.8.8 with 32 bytes of data:
+  Reply from 8.8.8.8: bytes=32 time=20ms TTL=115
+  Reply from 8.8.8.8: bytes=32 time=19ms TTL=115
+  Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)
+  Host is reachable
+
+OBSERVATION:
+Ping replies, IP reachability, packet loss and RTT are displayed by
+the system ping tool through the Python program.
+
+RESULT:
+Thus a ping utility program was implemented to test host reachability.
+
+VIVA:
+Q: What is ICMP Echo Request type? A: Type 8 (IPv4).
+Q: ICMP Echo Reply type? A: Type 0 (IPv4).
+Q: What is RTT? A: Time for request/reply round trip.
+
+
+======================================================================
+EXPERIMENT 14 - PACKET SNIFFING USING RAW SOCKETS
+======================================================================
+AIM:
+To capture and inspect network packets using raw packet access and
+display protocol, source IP and destination IP.
+
+THEORY:
+A packet sniffer observes frames/packets accessible on a network
+interface. IP protocol numbers: ICMP=1, TCP=6, UDP=17. Raw sockets
+allow direct access to low-level packet data, usually requiring
+administrator/root privileges. The scanned observation uses Scapy's
+sniff() helper; below are both a short Scapy version and a Linux native
+raw-socket example for the manual's explicit raw-socket wording.
+
+ALGORITHM:
+1. Select an authorised network interface.
+2. Capture a packet using Scapy or an OS raw packet socket.
+3. Check whether the packet contains an IPv4 layer.
+4. Extract the IPv4 protocol number, source IP and destination IP.
+5. Map protocol 1 to ICMP, 6 to TCP and 17 to UDP.
+6. Print packet details; repeat for a fixed number of packets.
+
+OPTION A - PYTHON SCAPY VERSION (save as scapy_sniffer.py):
+----------------------------------------------------------
+# Install for your lab environment: pip install scapy
+# Use sudo/admin privileges where packet capture requires them.
+from scapy.all import sniff, IP
+
+PROTOCOLS = {1: "ICMP", 6: "TCP", 17: "UDP"}
+
+def callback(packet):
+    if IP not in packet:
+        return
+    layer = packet[IP]
+    name = PROTOCOLS.get(layer.proto, "Other")
+    print("Protocol:", name)
+    print("Source IP:", layer.src)
+    print("Destination IP:", layer.dst)
+    print("-" * 30)
+
+sniff(filter="ip", prn=callback, store=False, count=10)
+
+OPTION B - LINUX NATIVE RAW SOCKET (save as raw_sniffer_linux.py):
+------------------------------------------------------------------
+# On Linux, run with sudo on a network you are authorised to inspect.
+# AF_PACKET raw socket receives Ethernet frames.
+import socket
+import struct
+
+ETH_P_ALL = 0x0003
+names = {1: "ICMP", 6: "TCP", 17: "UDP"}
+
+with socket.socket(socket.AF_PACKET, socket.SOCK_RAW,
+                   socket.htons(ETH_P_ALL)) as sniffer:
+    print("Listening for 10 IPv4 packets...")
+    found = 0
+    while found < 10:
+        frame, address = sniffer.recvfrom(65535)
+        if len(frame) < 34:
+            continue
+        ether_type = struct.unpack("!H", frame[12:14])[0]
+        if ether_type != 0x0800:     # IPv4 on non-VLAN Ethernet
+            continue
+        version_ihl = frame[14]
+        ihl = (version_ihl & 15) * 4
+        if (version_ihl >> 4) != 4 or ihl < 20:
+            continue
+        proto = frame[23]
+        source = socket.inet_ntoa(frame[26:30])
+        destination = socket.inet_ntoa(frame[30:34])
+        print("Protocol:", names.get(proto, str(proto)))
+        print("Source IP:", source)
+        print("Destination IP:", destination)
+        print("-" * 30)
+        found += 1
+
+RUN:
+  Linux: sudo python3 raw_sniffer_linux.py
+  Scapy: sudo python3 scapy_sniffer.py
+  Generate permitted traffic (e.g. ping a local test host).
+
+SAMPLE OUTPUT (illustrative):
+  Protocol: TCP
+  Source IP: 192.168.1.10
+  Destination IP: 192.168.1.1
+  ------------------------------
+  Protocol: UDP
+  Source IP: 192.168.1.10
+  Destination IP: 192.168.1.1
+  ------------------------------
+
+OBSERVATION:
+Captured packets displayed their source IP, destination IP and IP
+protocol. The capture depends on privileges and interface traffic.
+
+RESULT:
+Thus network packet capture and IPv4 protocol identification were
+implemented using Scapy or Linux raw sockets.
+
+VIVA:
+Q: TCP protocol number? A: 6. UDP? A: 17. ICMP? A: 1.
+Q: Why elevated privileges? A: Raw packet access is restricted by OS.
+Q: Can a switch port see all traffic? A: No, not generally; only visible
+   traffic, broadcasts, flooded frames, and monitored/mirrored packets.
+
+
+======================================================================
+EXPERIMENT 15 - ANALYSING WEB LOGS USING WEBALIZER
+======================================================================
+AIM:
+To analyse web-server access logs using the Webalizer tool and study
+visitor statistics, requests, hosts and user-agent information.
+
+SOFTWARE REQUIRED:
+Webalizer (Windows or Linux), sample web-server access-log file.
+
+THEORY:
+Webalizer is a web-log analysis application that processes HTTP access
+logs and generates reports containing page views, hits, bandwidth,
+unique hosts, hourly/daily/monthly activity, referrers and browsers.
+A web-server log commonly records the client IP, timestamp, requested
+resource, HTTP status code, response size and user-agent.
+
+PROCEDURE (same structure as manual):
+1. Install/open Webalizer or Webalizer Windows GUI.
+2. Download or select a permitted sample HTTP access-log file.
+3. In 'Choose Logfiles', select the input log file.
+4. Set target directory/output report directory.
+5. Choose 'Run Webalizer' (or run the appropriate command-line tool).
+6. Open generated HTML reports in a browser.
+7. Study 'Monthly Statistics', 'Daily Statistics', 'Hourly Statistics',
+   'Hosts', 'URLs', 'Referrers', 'User Agents' and 'Countries' views.
+8. Record total hits, file requests, pages, visits, bandwidth and top
+   hosts/user agents, if those fields are present in the sample log.
+
+OPTIONAL COMMAND-LINE EXAMPLE (Linux/Webalizer installation dependent):
+  mkdir -p web_report
+  webalizer -o web_report /path/to/access.log
+  # Open web_report/index.html in a web browser.
+
+EXPECTED OUTPUT:
+  Monthly statistics chart
+  List of hosts/IPs and number of requests
+  Most requested pages/URLs
+  Browser and user-agent distribution
+  Traffic/transfer totals by date/time
+
+OBSERVATION:
+The web-log file was processed and visit/host/page/user-agent data was
+represented through tables and charts in the generated HTML report.
+
+RESULT:
+Thus the Webalizer tool was studied and web-log statistics were analysed.
+
+VIVA:
+Q: Webalizer input? A: Web-server access log.
+Q: What is a hit? A: A request for a web-server resource.
+Q: What is a user-agent? A: Identifier supplied by a client such as a
+   browser or bot in its HTTP request.
+Q: Is 'unique visitors' perfectly accurate? A: No, IPs, cookies and
+   shared devices limit the precision of inferred unique visitor counts.
+
+
+======================================================================
+APPENDIX - ADDITIONAL PRACTICE TOPICS IN THE LAB MANUAL
+======================================================================
+The manual lists these FIVE items separately as 'Additional programs for
+practice' (not as numbered Experiments 1-15). The following are concise
+revision outlines, not replacements for independently assigned full code.
+
+A1. CHARACTER STUFFING / BSC FRAMES
+----------------------------------
+AIM: To frame a character stream by inserting control characters, send
+the frame and restore data by removing the stuffing at the receiver.
+
+THEORY: Special characters mark the start/end of a frame. A control
+character inside payload must be escaped so it is not misinterpreted.
+Typical byte values: DLE=0x10, STX=0x02, ETX=0x03.
+Frame = DLE STX + escaped payload + DLE ETX.
+
+ALGORITHM:
+1. Read input characters from data.txt.
+2. Prefix DLE STX and suffix DLE ETX.
+3. Duplicate a DLE byte if it occurs inside the data.
+4. Send frame using TCP to a receiver on another lab machine.
+5. Receiver scans delimiters and converts DLE DLE back to DLE.
+6. Store original decoded characters in received.txt.
+
+MINIMAL STUFFING / DESTUFFING FUNCTIONS:
+DLE, STX, ETX = b'\x10', b'\x02', b'\x03'
+
+def stuff(data):
+    return DLE + STX + data.replace(DLE, DLE + DLE) + DLE + ETX
+
+def destuff(frame):
+    if not (frame.startswith(DLE + STX) and frame.endswith(DLE + ETX)):
+        raise ValueError("Missing frame delimiters")
+    return frame[2:-2].replace(DLE + DLE, DLE)
+
+# Example:
+# bytes_out = stuff(open('data.txt','rb').read())
+# original = destuff(bytes_out)
+# open('received.txt','wb').write(original)
+
+SAMPLE: data bytes [A, DLE, B] -> frame includes [A, DLE, DLE, B].
+RESULT: Frame generation and removal of stuffed control characters
+were demonstrated. For the full assigned task, transmit frame bytes over
+TCP and decode on the receiving computer.
+
+A2. NAT AND PAT IN CISCO PACKET TRACER
+-------------------------------------
+AIM: To demonstrate Network Address Translation and Port Address
+Translation in a Cisco simulated network.
+THEORY: NAT changes private/source IP addressing at the border router;
+PAT lets multiple inside machines share a public address through
+translated source port numbers (also called NAT overload).
+
+EXAMPLE NETWORK:
+Inside: 192.168.10.0/24; router LAN G0/0 = 192.168.10.1/24;
+router WAN G0/1 = 203.0.113.2/30; ISP next hop = 203.0.113.1.
+
+ROUTER COMMANDS (illustrative only; configure ISP/simulated server too):
+    enable
+    configure terminal
+    interface gigabitEthernet 0/0
+    ip address 192.168.10.1 255.255.255.0
+    ip nat inside
+    no shutdown
+    exit
+    interface gigabitEthernet 0/1
+    ip address 203.0.113.2 255.255.255.252
+    ip nat outside
+    no shutdown
+    exit
+    access-list 1 permit 192.168.10.0 0.0.0.255
+    ip nat inside source list 1 interface gigabitEthernet 0/1 overload
+    ip route 0.0.0.0 0.0.0.0 203.0.113.1
+    end
+    show ip nat translations
+    show ip nat statistics
+
+EXPECTED OUTPUT: LAN clients reach the test external network; router
+translation table displays source IP:port mapped to public IP:port.
+RESULT: NAT/PAT concepts and translated traffic can be studied.
+
+A3. STATIC ROUTING WITH ROUTING TABLE AFTER EVERY UPDATE
+-------------------------------------------------------
+AIM: To implement static routes and display the routing table whenever
+an administrator adds or removes a route.
+PROCEDURE: (1) Build two or three LANs with routers. (2) Configure all
+interfaces and client gateways. (3) Run 'show ip route'. (4) Add route:
+    ip route 20.0.0.0 255.255.255.0 192.168.12.2
+(5) Re-run 'show ip route'. (6) Remove using 'no ip route ...'.
+(7) Re-run table display and test 'ping'.
+EXPECTED OBSERVATION: S marks static routes; route table changes after
+each add/delete. For a programmable routing-table simulation, store
+(destination, mask, next_hop, metric) tuples and print after each update.
+
+A4. DYNAMIC ROUTING WITH ROUTING TABLE AFTER EVERY UPDATE
+--------------------------------------------------------
+AIM: To simulate a distance-vector routing protocol and display route
+information after each exchange/iteration.
+ALGORITHM: Initialize each router's directly connected network metric to
+0. For every neighbouring router, accept advertised destination costs.
+Compute candidate distance = link cost + advertised distance. Replace
+the existing entry if the candidate is better. Print the routing table
+after each iteration and repeat until no routes change. In RIP, use hop
+count as the metric (maximum usable metric 15). In Cisco Packet Tracer
+verify with: 'show ip route', 'show ip protocols', ping and traceroute.
+
+A5. FTP SERVER USING SOCKET PROGRAMMING
+---------------------------------------
+AIM: To implement file upload/download using a client-server design.
+THEORY: FTP traditionally uses a TCP control connection on port 21 and
+separate data connections for file content. A real FTP server must handle
+commands like USER, PASS, PWD, LIST, RETR, STOR, QUIT and active/passive
+data connections, and enforce account/path restrictions.
+PROCEDURE: (1) Start an FTP server in a private lab. (2) Define a test
+user/directory. (3) Connect via an FTP client. (4) Log in with the test
+account. (5) Transfer a small text file with GET/PUT; list directory.
+(6) Check received file content and logout. If implementing from raw
+sockets, implement the control protocol and a separate data socket.
+EXPECTED OBSERVATION: Client connects; LIST displays files; RETR/STOR
+transfers file bytes; QUIT closes the session.
+NOTE: A one-socket custom 'send file' example is not standards-compliant
+FTP. FTP sends passwords unencrypted; do not use Internet/external
+credentials for lab demonstrations. Prefer secure SFTP in production.
+
+
+======================================================================
+QUICK EXAM REVISION - MAIN COMMANDS / FORMULAS
+======================================================================
+Windows IP details            : ipconfig /all
+Linux IP details              : ip address show
+Display ARP table             : arp -a
+Test connectivity             : ping <IP>
+Display DNS record            : nslookup <domain>
+View active connections       : netstat -an  or  ss -tuln
+Display route (Windows)       : route print
+Display route (Linux)         : ip route show
+Cisco privileged mode         : enable
+Cisco global config           : configure terminal
+Cisco interface IP            : ip address <IP> <MASK>
+Cisco enable port             : no shutdown
+Cisco IP overview             : show ip interface brief
+Cisco routing table           : show ip route
+Cisco static route            : ip route <NETWORK> <MASK> <NEXT_HOP>
+Cisco RIP config              : router rip
+Cisco RIPv2                   : version 2
+Nmap hosts without port scan  : nmap -sn <TARGET>
+Nmap ARP / ICMP Echo          : -PR / -PE
+Wireshark TCP or UDP filter   : tcp || udp
+Wireshark ARP filter          : arp
+Hamming redundant-bit rule   : 2^r >= m + r + 1
+Hamming parity locations     : 1, 2, 4, 8, ...
+Subnet usable IPv4 hosts     : 2^(32-prefix) - 2 (usual LAN subnets)
+/24 mask                      : 255.255.255.0
+/27 mask                      : 255.255.255.224
+/30 mask                      : 255.255.255.252
+TCP server sequence           : socket, bind, listen, accept, recv, send
+UDP send/receive              : sendto, recvfrom
+ICMP/TCP/UDP IPv4 protocol # : 1 / 6 / 17
+
+GENERAL RESULT LINE FOR EXPERIMENTS:
+'Thus the given experiment was performed and the required outputs were
+observed/verified successfully.' Use that wording ONLY if you actually
+ran the experiment; otherwise state that the setup/code was prepared.
+
+SOURCE BASIS:
+[1] CS23532_CN_Labmanual_2026-27.pdf (108 pages; official experiment
+    list and practical descriptions).
+[2] CN OBS 1-11.pdf (33 scanned notebook pages; experiments 1-11).
+[3] Ex. 4. LAN_Setup.docx.pdf (3 pages; detailed LAN configuration).
+[4] Adobe Scan 09-Oct-2026.pdf (7 handwritten pages; experiments 12-14).
+
+END OF COMPLETE CS23532 EXPERIMENT NOTES
